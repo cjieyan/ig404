@@ -7,7 +7,6 @@ Instagram的Puppeteer爬虫解决方案
 # docker run --name mongo  -p 27017:27017 -d mongo:latest --auth
 配置config.js 支持多个Instagram账号轮换防止被ban
 挂梯子后执行爬取
-# node ins_login
 # node ins_user_info_posts
 ```
 
