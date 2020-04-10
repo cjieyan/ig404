@@ -66,6 +66,9 @@ var func2 = function (req, ret, callback) {
             }
         }
         await page.waitFor(3000);
+        if( 0 == user_hrefs.length){
+            user_hrefs.push("https://www.instagram.com/ashin_ig/")
+        }
         while (user_hrefs.length > 0) {
             let error_times = 0
 
@@ -96,8 +99,6 @@ var func2 = function (req, ret, callback) {
                     continue;
                 }
             }
-
-
             try {
                 let Error = await page.$eval("main h2", el => el.innerText);
                 if ("Error" == Error) {
@@ -105,8 +106,7 @@ var func2 = function (req, ret, callback) {
                     await browser.close();
                     process.exit();
                 }
-            } catch (e) {
-            }
+            } catch (e) {}
 
             try {
                 let private_ele = await page.$eval("main h2.rkEop", el => el.innerText);
@@ -114,8 +114,7 @@ var func2 = function (req, ret, callback) {
                     console.log("This Account is Private: ", goto_url);
                     continue
                 }
-            } catch (e) {
-            }
+            } catch (e) {}
 
 
             let html_data = await page.$eval("head", el => el.innerHTML)
@@ -128,12 +127,12 @@ var func2 = function (req, ret, callback) {
 
             let href_md5 = crypto.createHash('md5').update(goto_url).digest("hex")
             MongoDB.update('user_hrefs',
-                {"href_md5": href_md5}, {"has_info": config.production},
-                function (err, res) {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
+            {"href_md5": href_md5}, {"has_info": config.production},
+            function (err, res) {
+                if (err) {
+                    console.log(err);
+                }
+            });
 
 
             let reg = /<span.+?Verified/gim;
@@ -230,8 +229,12 @@ var func2 = function (req, ret, callback) {
             };
             console.log("posts num: " + posts);
 
-            await tools.downloadImage(user_info["headimg"], "heads").then(function (resolve, reject) {
-            })
+            try{
+                await tools.downloadImage(user_info["headimg"], "heads")
+                  //.then(function (resolve, reject) {})
+            }catch(e){
+                console.log(e)
+            }
             MongoDB.findOne("user_info", {"href_md5": user_info['href_md5']}, function (err, res) {
                 if (!res) {/////[] == true
                     MongoDB.save("user_info", user_info, function (err, res) {
@@ -337,9 +340,12 @@ var func2 = function (req, ret, callback) {
                                 "created_at": created_at
                             }
                             console.log("post_data.....", post_data)
+                            try{
+                                await tools.downloadImage(img_pre_src, "posts")
+                                  //.then(function (resolve, reject) {})
+                            }catch(e){
 
-                            await tools.downloadImage(img_pre_src, "posts").then(function (resolve, reject) {
-                            })
+                            }
 
                             MongoDB.findOne("user_posts",
                                 {"posts_href_md5": posts_href_md5},
@@ -377,200 +383,205 @@ var func2 = function (req, ret, callback) {
                         scroll_time_obj[pro] = 1
                     }
 
-                    break
+                    // break
                     console.log("scroll_times : " + (scroll_times++) + "  user_posts_hrefs num : " + user_posts_hrefs.length)
 
-                ///////spider posts 数据
-                if(posts > 0 && verified > 0){
-                    //#############################
-                    //#######  1.列表  #############
-                    //#############################
-                    let class_sel = "article div.kIKUG"
-            				let i = 0;
+                    ///////spider posts 数据
+                    if (posts > 0 && verified > 0) {
+                        //#############################
+                        //#######  1.列表  #############
+                        //#############################
+                        let class_sel = "article div.kIKUG"
+                        let i = 0;
 
-                    let scroll_times = 0;
-										let user_posts_hrefs = []
-										let phrefs = []
+                        let scroll_times = 0;
+                        let user_posts_hrefs = []
+                        let phrefs = []
 
 
-										let max_scroll_times = 100;
-										if(posts > 1000){
-												max_scroll_times = ( posts / 10 ) + 20;
-										}
+                        let max_scroll_times = 100;
+                        if (posts > 1000) {
+                            max_scroll_times = (posts / 10) + 20;
+                        }
 
-										let scroll_time_obj = {}
-                    while(user_posts_hrefs.length < posts && scroll_times < max_scroll_times){
-													let temp = []
-													//tools.sleep(1000)
-                          try{
-                            	await page.waitForSelector(class_sel);
+                        let scroll_time_obj = {}
+                        while (user_posts_hrefs.length < posts && scroll_times < max_scroll_times) {
+                            let temp = []
+                            //tools.sleep(1000)
+                            try {
+                                await page.waitForSelector(class_sel);
                                 temp = await page.evaluate(class_sel => {
                                     const class_tars = Array.from(document.querySelectorAll(class_sel));
                                     return class_tars.map(item_list => {
-																			 let href = ""
-																			 let img_src = ""
-																			  try{
-																					  href = item_list.querySelector("a").href
-																					  img_src = item_list.querySelector("img.FFVAD").src
-																			  }catch(e){}
+                                        let href = ""
+                                        let img_src = ""
+                                        try {
+                                            href = item_list.querySelector("a").href
+                                            img_src = item_list.querySelector("img.FFVAD").src
+                                        } catch (e) {
+                                        }
                                         return {
-																					 "href": href,
-																					 'img_src': img_src
-																			  };
+                                            "href": href,
+                                            'img_src': img_src
+                                        };
                                     });
                                 }, class_sel);
-                          }catch(e){
-															  console.log( "user_posts_hrefs break....", e);
+                            } catch (e) {
+                                console.log("user_posts_hrefs break....", e);
                                 break;
-                          }
-													//await page.waitFor( tools.slowRand() )
+                            }
+                            //await page.waitFor( tools.slowRand() )
 
-													for (var hkey in temp) {
-																let posts_href = temp[hkey]['href']
-																let img_pre_src = temp[hkey]['img_src']
-															  img_pre_src = img_pre_src.replace(new RegExp("&amp;",'g'),"&");
+                            for (var hkey in temp) {
+                                let posts_href = temp[hkey]['href']
+                                let img_pre_src = temp[hkey]['img_src']
+                                img_pre_src = img_pre_src.replace(new RegExp("&amp;", 'g'), "&");
 
-																let posts_href_md5 = crypto.createHash('md5').update(posts_href).digest("hex")
-																if( posts_href && user_posts_hrefs.indexOf( posts_href_md5 ) < 0 ){
-																		phrefs.push(posts_href)
-																		user_posts_hrefs.push( posts_href_md5 )
-																		let created_at = new Date().getTime()
-																		let posts_hrefs_data = {
-																				"href_md5" : href_md5,
-																				"posts_href" : posts_href,
-																				"posts_href_md5" : posts_href_md5,
-																				"flag" : 0,
-																				"created_at" : created_at
-																		}
-																		MongoDB.findOne("user_posts_hrefs",
-																				{"posts_href_md5": posts_href_md5},
-																				function(err, res){
-																						if( ! res){
-																								MongoDB.save("user_posts_hrefs", posts_hrefs_data, function(err, res){});
-																						}
-																				}
-																	  );
+                                let posts_href_md5 = crypto.createHash('md5').update(posts_href).digest("hex")
+                                if (posts_href && user_posts_hrefs.indexOf(posts_href_md5) < 0) {
+                                    phrefs.push(posts_href)
+                                    user_posts_hrefs.push(posts_href_md5)
+                                    let created_at = new Date().getTime()
+                                    let posts_hrefs_data = {
+                                        "href_md5": href_md5,
+                                        "posts_href": posts_href,
+                                        "posts_href_md5": posts_href_md5,
+                                        "flag": 0,
+                                        "created_at": created_at
+                                    }
+                                    MongoDB.findOne("user_posts_hrefs",
+                                        {"posts_href_md5": posts_href_md5},
+                                        function (err, res) {
+                                            if (!res) {
+                                                MongoDB.save("user_posts_hrefs", posts_hrefs_data, function (err, res) {
+                                                });
+                                            }
+                                        });
 
-					 													let img_pre_src_md5 = crypto.createHash('md5').update(img_pre_src).digest("hex")
-																		let post_data = {
-																				'href_md5' : href_md5,
-																				'post_href' : posts_href,
-																				'posts_href_md5' : posts_href_md5,
-																			  'img_pre_src' : img_pre_src,
-																				'img_pre_src_md5' : img_pre_src_md5,
-																				"created_at" : created_at
-																		}
+                                    let img_pre_src_md5 = crypto.createHash('md5').update(img_pre_src).digest("hex")
+                                    let post_data = {
+                                        'href_md5': href_md5,
+                                        'post_href': posts_href,
+                                        'posts_href_md5': posts_href_md5,
+                                        'img_pre_src': img_pre_src,
+                                        'img_pre_src_md5': img_pre_src_md5,
+                                        "created_at": created_at
+                                    }
 
 
-																		MongoDB.findOne("user_posts",
-																				{"posts_href_md5": posts_href_md5},
-																				function(err, res){
-																						if( ! res ){
-																								MongoDB.save('user_posts',
-																									post_data,
-																									function (err, res) {
-																										if(err){
-																												console.log("user_posts save", err);
-																										}
-																									});
-																									 tools.downloadImage(img_pre_src, "posts").then(function(resolve, reject){})
-																						}else{
-																								if(res['created_at']){
-																										post_data['created_at'] = res['created_at']
-																								}
-																								MongoDB.update('user_posts',
-																										{"posts_href_md5": posts_href_md5},
-																										post_data,
-																										function (err, res) {
-																											if(err){
-																													console.log("user_posts, update", err);
-																											}
-																									  }
-																								)
-																								if( ! res['img_pre_src_md5']  ){
-																										 tools.downloadImage(img_pre_src, "posts").then(function(resolve, reject){})
-																								}
-																						}
-																		  })
-																}
-														}
-
-														let pro = "scroll_" + user_posts_hrefs.length;
-														if(scroll_time_obj.hasOwnProperty(pro))  {
-																scroll_time_obj[pro] = ++ scroll_time_obj[pro]
-														}else{
-																scroll_time_obj[pro] = 1
-														}
-
-														if(user_posts_hrefs.length > 0){
-																break
-														}
-														console.log("scroll_times : " + (scroll_times ++ ) + "  user_posts_hrefs num : " + user_posts_hrefs.length)
-
-														if(scroll_time_obj[pro] > 10){
-																break
-														}
-														if(scroll_time_obj[pro] == 4){
-                            	  await autoScrollUp();//往上滚
-		                            async function autoScrollUp() {
-		                                  await page.evaluate(async () => {
-		                                      try {
-		                                          window.scrollBy(0, -3500);
-		                                      } catch (e) {}
-		                                  });
-		                            }
-																continue
-														}else{
-																await autoScroll();//正常滚
-		                            async function autoScroll() {
-		                                  await page.evaluate(async () => {
-		                                      try {
-		                                          window.scrollBy(0, 1500);
-		                                      } catch (e) {}
-		                                  });
-		                            }
-														}
-                    }
-                    if (scroll_time_obj[pro] == 4) {
-                        await autoScrollUp();//往上滚
-                        async function autoScrollUp() {
-                            await page.evaluate(async () => {
-                                try {
-                                    window.scrollBy(0, -3500);
-                                } catch (e) {
+                                    MongoDB.findOne("user_posts",
+                                        {"posts_href_md5": posts_href_md5},
+                                        function (err, res) {
+                                            if (!res) {
+                                                MongoDB.save('user_posts',
+                                                    post_data,
+                                                    function (err, res) {
+                                                        if (err) {
+                                                            console.log("user_posts save", err);
+                                                        }
+                                                    });
+                                                tools.downloadImage(img_pre_src, "posts")
+                                                    //.then(function (resolve, reject) {})
+                                            } else {
+                                                if (res['created_at']) {
+                                                    post_data['created_at'] = res['created_at']
+                                                }
+                                                MongoDB.update('user_posts',
+                                                    {"posts_href_md5": posts_href_md5},
+                                                    post_data,
+                                                    function (err, res) {
+                                                        if (err) {
+                                                            console.log("user_posts, update", err);
+                                                        }
+                                                    }
+                                                )
+                                                if (!res['img_pre_src_md5']) {
+                                                    tools.downloadImage(img_pre_src, "posts")
+                                                        //.then(function (resolve, reject) {})
+                                                }
+                                            }
+                                        })
                                 }
-                            });
-                        }
+                            }
 
-                        continue
-                    } else {
-                        await autoScroll();//正常滚
-                        async function autoScroll() {
-                            await page.evaluate(async () => {
-                                try {
-                                    window.scrollBy(0, 1500);
-                                } catch (e) {
+                            let pro = "scroll_" + user_posts_hrefs.length;
+                            if (scroll_time_obj.hasOwnProperty(pro)) {
+                                scroll_time_obj[pro] = ++scroll_time_obj[pro]
+                            } else {
+                                scroll_time_obj[pro] = 1
+                            }
+
+                            if (user_posts_hrefs.length > 0) {
+                                break
+                            }
+                            console.log("scroll_times : " + (scroll_times++) + "  user_posts_hrefs num : " + user_posts_hrefs.length)
+
+                            if (scroll_time_obj[pro] > 10) {
+                                break
+                            }
+                            if (scroll_time_obj[pro] == 4) {
+                                await autoScrollUp();//往上滚
+                                async function autoScrollUp() {
+                                    await page.evaluate(async () => {
+                                        try {
+                                            window.scrollBy(0, -3500);
+                                        } catch (e) {
+                                        }
+                                    });
                                 }
-                            });
+
+                                continue
+                            } else {
+                                await autoScroll();//正常滚
+                                async function autoScroll() {
+                                    await page.evaluate(async () => {
+                                        try {
+                                            window.scrollBy(0, 1500);
+                                        } catch (e) {
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        if (scroll_time_obj[pro] == 4) {
+                            await autoScrollUp();//往上滚
+                            async function autoScrollUp() {
+                                await page.evaluate(async () => {
+                                    try {
+                                        window.scrollBy(0, -3500);
+                                    } catch (e) {
+                                    }
+                                });
+                            }
+
+                            continue
+                        } else {
+                            await autoScroll();//正常滚
+                            async function autoScroll() {
+                                await page.evaluate(async () => {
+                                    try {
+                                        window.scrollBy(0, 1500);
+                                    } catch (e) {
+                                    }
+                                });
+                            }
                         }
                     }
+                    //抓取用户的posts
+                    while (phrefs.length > 0) {
+                        let post_href = phrefs.pop()
+                        await tools.userPosts(page, post_href, href_md5)
+                    }
+
                 }
-
-
-                //抓取用户的posts
-                while (phrefs.length > 0) {
-                    let post_href = phrefs.pop()
-                    await tools.userPosts(page, post_href, href_md5)
-                }
-
             }
-        }
 
-        //class end
-        await tools.dd("ins_user_info happy ending...");
-        console.log("ins_user_info happy ending...");
-        await browser.close();
-        process.exit();
+            //class end
+            await tools.dd("ins_user_info happy ending...");
+            console.log("ins_user_info happy ending...");
+            await browser.close();
+            process.exit();
+        }
     })();
     callback(req, ret, 0);
 }

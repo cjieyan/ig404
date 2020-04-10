@@ -5,7 +5,6 @@ const crypto = require('crypto');
 const math = require('math');
 const config = require('./config');
 const MongoDB = require('./mongodb');
-const qiniu = require('./qiniu_upload/index.js');
 const proc = require('process');
 
 class tools {
@@ -20,7 +19,6 @@ class tools {
       }, time);
     })
   };
-
   static async dd(content){//往钉钉发通知
       let exec = require('child_process').exec;
       let cmdStr = "curl 'https://oapi.dingtalk.com/robot/send?access_token=' "
@@ -29,13 +27,11 @@ class tools {
       await exec(cmdStr, function(err,stdout,stderr){
       });
   }
-
   static async execCmd(cmd){
       let exec = require('child_process').exec;
       await exec(cmd, function(err,stdout,stderr){});
 
   }
-
   static year_month(){
     let date_ob = new Date();
     let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
@@ -43,9 +39,6 @@ class tools {
     let year = date_ob.getFullYear();
     return year + month
   }
-
-
-
   static async downloadImage (img_url, ppath) {
       if( ! img_url) {
           console.log("downloadImage ... file empty");
@@ -700,3 +693,6 @@ class tools {
         return fn.toString().split('\n').slice(1,-1).join('\n') + '\n'
   }
 }
+
+
+module.exports=tools
