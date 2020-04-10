@@ -37,4 +37,4 @@ Instagram的Puppeteer爬虫解决方案
 * 我将一一解答
 
 ## **大佬求赞求咖啡**
-![avatar](./images/wxpayimg.jpeg)
+<img src="./images/wxpayimg.jpeg" width = "50%" height = "" div  />
