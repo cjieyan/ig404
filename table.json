@@ -1,0 +1,129 @@
+{
+	"user_hrefs":{
+		"href_md5" : {"type" : "String", "index": true },
+		"href" : "String",
+		"flag" : {"type" : "Number", "index": true },
+		"has_info" : {"type" : "Number", "index": true },
+		"created_at" : "Number"
+	},
+	"user_info":{
+		"href" : "String",
+		"href_md5" : {"type" : "String", "index": true },
+		"nickname" : {"type" : "String", "index": true },
+		"username" : {"type" : "String", "index": true },
+		"cnname" : {"type" : "String", "index": true },
+		"type" : {"type" : "String", "index": true },
+		"headimg" : "String",
+		"headimg_md5":"String",
+		"headimg_qiniu":"String",
+		"verified" : "Number",
+		"posts" : "String",
+		"followers" : "String",
+		"following" : "String",
+		"intro" : "String",
+		"intro_link" : "String",
+		"created_at" : {"type" : "Number", "index": true },
+		"scrapy_count" : "Number",
+		"last_post_at":"Number"
+	},
+	"user_posts_hrefs":{
+		"href_md5" : {"type" : "String", "index": true },
+		"posts_href" : "String",
+		"posts_href_md5" : {"type" : "String", "index": true },
+		"flag" : {"type" : "Number", "index": true },
+		"created_at" : "Number"
+	},
+	"user_posts" : {
+		"href_md5" : {"type" : "String", "index": true },
+		"post_href" : {"type" : "String", "index": true },
+		"posts_href_md5" : {"type" : "String", "index": true },
+		"content" : "String",
+		"media_type" : "String",
+		"video_src" : ["String"],
+		"video_src_md5" : ["String"],
+		"video_src_qiniu" : ["String"],
+		"img_pre_src": "String",
+		"img_pre_src_md5": "String",
+		"img_pre_src_qiniu" : "String",
+		"img_src" : ["String"],
+		"img_src_md5" : ["String"],
+		"img_src_qiniu" : ["String"],
+		"post_at" : {"type" : "Number", "index": true },
+		"created_at" : {"type" : "Number", "index": true }
+	},
+	"user_posts_comments":{
+		"href_md5" : {"type" : "String", "index": true },
+		"user_info_href_md5" : {"type" : "String", "index": true },
+		"headimg_md5" : "String",
+		"nickname" : {"type" : "String", "index": true },
+		"content":"String",
+		"created_at" : "Number"
+	},
+	"user_tagged" :{
+		"href_md5" : {"type" : "String", "index": true },
+		"tagged_href" : {"type" : "String", "index": true },
+		"tagged_href_md5" : {"type" : "String", "index": true },
+		"content" : "String",
+		"media_type" : "String",
+		"media_src" : ["String"],
+		"media_src_md5" : ["String"],
+		"tagged_at" : {"type" : "Number", "index": true },
+		"created_at" : {"type" : "Number", "index": true }
+	},
+	"account" :{
+		"index" : {"type" : "String", "index": true },
+		"value" : "Number"
+	},
+	"ipproxy":{
+		"ipport" :{"type":"string", "index":true},
+		"use" : "Number"
+	},
+	"film_hrefs":{
+		"href_md5" : {"type" : "String", "index": true },
+		"href" : "String",
+		"name":"String",
+		"flag" : {"type" : "Number", "index": true },
+		"has_info" : {"type" : "Number", "index": true },
+		"film_type":{"type":"Number","index":true},
+		"created_at" : "Number"
+	},
+	"film_info":{
+		"href_md5" : {"type" : "String", "index": true },
+		"name":"String",
+		"name_md5":{"type" : "String", "index": true },
+		"ename":"String",
+		"cover":"String",
+		"cover_md5":"String",
+		"type_arr":["String"],
+		"area":"String",
+		"duration":"String",
+		"place":"String",
+		"imgs_src_md5": ["String"],
+		"intro": "String",
+		"actors":["String"],
+		"directors":["String"],
+		"play_time":"Number",
+		"created_at" : "Number"
+	},
+	"film_users":{
+		"name":"String",
+		"ename":"String",
+		"name_md5":{"type" : "String", "index": true },
+		"href":"String",
+		"href_md5":{"type" : "String", "index": true },
+		"headimg":"String",
+		"headimg_md5":"String",
+		"jobs":["String"],
+		"intro":"String",
+		"stories_num":"Number",
+		"stories":["String"],
+		"flag":{"type" : "Number", "index": true },
+		"created_at" : "Number",
+		"is_new":{"type" : "Number", "index": true }
+	},
+	"pic_class":{
+		"name":{"type" : "String", "index": true },
+		"style":"String"
+	}
+
+}

@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "async": "^2.6.2",
+    "axios": "^0.19.0",
+    "child_process": "^1.0.2",
+    "crypto": "^1.0.1",
+    "fs": "0.0.1-security",
+    "log4js": "^4.4.0",
+    "math": "0.0.3",
+    "md5-node": "^1.0.1",
+    "mongodb": "^3.3.2",
+    "mongoose": "^5.7.1",
+    "pomelo-logger": "^0.1.7",
+    "puppeteer": "^1.14.0",
+    "puppeteer-core": "^1.14.0",
+    "qiniu": "^7.3.0",
+    "redis": "^2.8.0",
+    "saslprep": "^1.0.3",
+    "urlencode": "^1.1.0"
+  }
+}
