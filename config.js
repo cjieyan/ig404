@@ -4,22 +4,22 @@ var config = {
     production:1,
     mongodb: {
         db_user: "tests",
-        db_pwd: "tests",
+        db_pwd: "",
         db_host: "127.0.0.1",
         db_port: 27017,
         db_name: "tests"
     },
     instagram :[
         {
-            "username":"",//150
+            "username":"",
             "password":""
         },
         {
-            "username":"",//150
+            "username":"",
             "password":""
         },
         {
-            "username":"",//150
+            "username":"",
             "password":""
         }
     ]
