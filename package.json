@@ -5,7 +5,7 @@
     "child_process": "^1.0.2",
     "crypto": "^1.0.1",
     "fs": "0.0.1-security",
-    "log4js": "^4.4.0",
+    "log4js": "^6.4.0",
     "math": "0.0.3",
     "md5-node": "^1.0.1",
     "mongodb": "^3.3.2",
