@@ -9,7 +9,7 @@
     "math": "0.0.3",
     "md5-node": "^1.0.1",
     "mongodb": "^3.3.2",
-    "mongoose": "^5.7.1",
+    "mongoose": "^5.13.15",
     "pomelo-logger": "^0.1.7",
     "puppeteer": "^1.14.0",
     "puppeteer-core": "^1.14.0",
